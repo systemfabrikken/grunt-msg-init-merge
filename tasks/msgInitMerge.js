@@ -30,6 +30,10 @@ function objToCmdArgs(options)
 module.exports = function (grunt) {
 
 	grunt.registerMultiTask('msgInitMerge', 'Grunt task for msginit and msgmerge', function () {
+		//since grunt.registerMultiTask will parse the config-object and process the registerMultiTask expression
+		// - which will cause an exception since 'locale' and 'potFileName' isnt defined, we register an alternative
+		//delimiter pair that can be used in the poFilesPath expression
+		grunt.template.addDelimiters('msginitmerge', '{%', '%}');
 		var options = this.options({
 			locales: [], // ['fr', {name:'ru_RU',folder:'ru'}]
 			poFilesPath: '', //tpl for .po files, e.g.: i18n/<%= locale%>/<%= potFileName%>.po
@@ -74,7 +78,8 @@ module.exports = function (grunt) {
 							locale: localeFolder,
 							potFileName: potFileName,
 							potDirName: path.dirname(potFilePath)
-						}
+						},
+						delimiters: 'msginitmerge'
 					});
 
 				poFilePath = path.resolve(poFilePath);
